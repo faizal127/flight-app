@@ -2,6 +2,22 @@
 Flight::route( 'POST /users/add', function(){
 	$db = Flight::db();
 
+	$username = $_POST['username'];
+	$password = $_POST['password'];
+	
+	$data = array(
+		'username' => $username,
+		'password' => md5( $password )
+	);
+	$id = $db->insert('users', $data);
+	if ($id){
+	    Flight::redirect( get_url( 'users' ) );
+	} else {
+	    echo 'insert failed: ' . $db->getLastError();
+	}
+
+
+
 	// $data = array(
 	// 	'username' => 'somenone',
 	// 	'password' => md5('password')
@@ -13,6 +29,12 @@ Flight::route( 'POST /users/add', function(){
 	// else
 	//     echo 'insert failed: ' . $db->getLastError();
 });
+
+flight::route('GET /users/add', function(){
+	Flight::view()->set('title', 'Users');
+	flight::render('add-user');
+});
+
 
 Flight::route( 'GET /users(/page/@page:[0-9]+)', function($page){
 	Flight::view()->set('title', 'Users');
